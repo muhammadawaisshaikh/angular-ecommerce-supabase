@@ -22,6 +22,11 @@ export class ProductsComponent implements OnInit {
   currentPage = 1;
   itemsPerPage = 12;
   totalPages = 1;
+  
+  // Loading and error states
+  isLoading = true;
+  error = '';
+  hasData = false;
 
   constructor(
     private supabaseService: SupabaseService,
@@ -34,12 +39,31 @@ export class ProductsComponent implements OnInit {
 
   async loadProducts(): Promise<void> {
     try {
-      this.allProducts = await this.supabaseService.getProducts();
-      this.extractCategories();
-      this.filterProducts();
+      this.isLoading = true;
+      this.error = '';
+      
+      const products = await this.supabaseService.getProducts();
+      
+      this.allProducts = products || [];
+      
+      this.hasData = this.allProducts.length > 0;
+      
+      if (this.hasData) {
+        this.extractCategories();
+        this.filterProducts();
+      } else {
+        this.error = 'No products found. Please check back later.';
+      }
     } catch (error) {
-      console.error('Error loading products:', error);
+      this.error = 'Failed to load products. Please try again.';
+      this.hasData = false;
+    } finally {
+      this.isLoading = false;
     }
+  }
+
+  async refreshProducts(): Promise<void> {
+    await this.loadProducts();
   }
 
   extractCategories(): void {
@@ -61,7 +85,7 @@ export class ProductsComponent implements OnInit {
       filtered = filtered.filter(product =>
         product.name.toLowerCase().includes(search) ||
         product.description.toLowerCase().includes(search) ||
-        product.category.toLowerCase().includes(search)
+        (product.category && product.category.toLowerCase().includes(search))
       );
     }
 
@@ -92,7 +116,7 @@ export class ProductsComponent implements OnInit {
 
   calculatePagination(): void {
     this.totalPages = Math.ceil(this.filteredProducts.length / this.itemsPerPage);
-    if (this.currentPage > this.totalPages) {
+    if (this.currentPage > this.totalPages && this.totalPages > 0) {
       this.currentPage = this.totalPages;
     }
   }
@@ -117,5 +141,6 @@ export class ProductsComponent implements OnInit {
 
   addToCart(product: Product): void {
     this.cartService.addToCart(product);
+    // You could add a toast notification here
   }
 } 

@@ -50,7 +50,6 @@ export class CartComponent implements OnInit {
 
   proceedToCheckout(): void {
     // Navigate to checkout page
-    // This would be implemented with a router navigation
-    console.log('Proceeding to checkout...');
+    // The routerLink in the template will handle this
   }
 } 

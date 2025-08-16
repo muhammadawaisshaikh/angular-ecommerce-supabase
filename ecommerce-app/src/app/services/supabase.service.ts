@@ -134,17 +134,20 @@ export class SupabaseService {
 
   // Product methods
   async getProducts(): Promise<Product[]> {
-    const { data, error } = await this.supabase
-      .from('products')
-      .select('*')
-      .order('created_at', { ascending: false });
-    
-    if (error) {
-      console.error('Error fetching products:', error);
+    try {
+      const { data, error } = await this.supabase
+        .from('products')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        return [];
+      }
+      
+      return data || [];
+    } catch (err) {
       return [];
     }
-    
-    return data || [];
   }
 
   async getProduct(id: string): Promise<Product | null> {

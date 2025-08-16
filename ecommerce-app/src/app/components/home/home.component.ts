@@ -13,6 +13,9 @@ import { CartService } from '../../services/cart.service';
 })
 export class HomeComponent implements OnInit {
   featuredProducts: Product[] = [];
+  isLoading = true;
+  error = '';
+  hasData = false;
 
   constructor(
     private supabaseService: SupabaseService,
@@ -25,11 +28,27 @@ export class HomeComponent implements OnInit {
 
   async loadFeaturedProducts(): Promise<void> {
     try {
+      this.isLoading = true;
+      this.error = '';
+      
       const products = await this.supabaseService.getProducts();
+      
       this.featuredProducts = products.slice(0, 8); // Show first 8 products
+      this.hasData = this.featuredProducts.length > 0;
+      
+      if (!this.hasData) {
+        this.error = 'No featured products available.';
+      }
     } catch (error) {
-      console.error('Error loading featured products:', error);
+      this.error = 'Failed to load featured products.';
+      this.hasData = false;
+    } finally {
+      this.isLoading = false;
     }
+  }
+
+  async refreshProducts(): Promise<void> {
+    await this.loadFeaturedProducts();
   }
 
   addToCart(product: Product): void {
