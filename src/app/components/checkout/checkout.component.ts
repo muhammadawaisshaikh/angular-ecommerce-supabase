@@ -24,7 +24,7 @@ export class CheckoutComponent implements OnInit {
   // Computed signals for totals
   readonly shippingCost = computed(() => {
     const subtotal = this.subtotal();
-    return subtotal >= 50 ? 0 : 5.99;
+    return subtotal >= 50 ? 0 : 5.99; // ₨50 threshold, ₨5.99 shipping cost
   });
 
   readonly total = computed(() => {

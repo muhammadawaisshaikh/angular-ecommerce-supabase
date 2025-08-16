@@ -1,15 +1,26 @@
 <div class="bg-white min-h-screen">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Back Button -->
-    <div class="mb-6">
+    <div class="mb-6 flex items-center justify-between">
       <button (click)="goBackToProducts()" 
               class="inline-flex items-center text-indigo-600 hover:text-indigo-700">
         <i class="fas fa-arrow-left mr-2"></i>
         Back to Products
       </button>
+      
+      <button (click)="refreshProduct()" 
+              [disabled]="isLoading()"
+              class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50">
+        @if (isLoading()) {
+          <i class="fas fa-spinner fa-spin mr-2"></i>
+        } @else {
+          <i class="fas fa-redo mr-2"></i>
+        }
+        {{ isLoading() ? 'Loading...' : 'Refresh' }}
+      </button>
     </div>
 
-    @if (isLoading) {
+    @if (isLoading()) {
       <!-- Loading State -->
       <div class="text-center py-12">
         <div class="inline-flex items-center px-4 py-2 font-semibold leading-6 text-indigo-600">
@@ -17,11 +28,11 @@
           Loading product...
         </div>
       </div>
-    } @else if (error) {
+    } @else if (error()) {
       <!-- Error State -->
       <div class="text-center py-12">
         <i class="fas fa-exclamation-triangle text-5xl text-red-400 mb-4"></i>
-        <h3 class="mt-2 text-sm font-medium text-gray-900">{{ error }}</h3>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">{{ error() }}</h3>
         <div class="mt-6">
           <button (click)="goBackToProducts()" 
                   class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
@@ -30,29 +41,29 @@
           </button>
         </div>
       </div>
-    } @else if (product) {
+    } @else if (product()) {
       <!-- Product Details -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <!-- Product Image -->
         <div class="lg:col-span-1">
-          <img [src]="product.image_url" 
-               [alt]="product.name"
+          <img [src]="product()!.image_url" 
+               [alt]="product()!.name"
                class="w-full h-96 object-cover rounded-lg shadow-lg">
         </div>
 
         <!-- Product Info -->
         <div class="lg:col-span-1">
-          <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ product.name }}</h1>
+          <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ product()!.name }}</h1>
           
           <div class="mb-6">
-            <span class="text-3xl font-bold text-indigo-600">${{ product.price }}</span>
-            @if (product.stock > 0) {
-              <span class="ml-4 text-sm text-green-600 bg-green-100 px-2 py-1 rounded-full flex items-center">
+            <span class="text-3xl font-bold text-indigo-600">₨{{ product()!.price }}</span>
+            @if (product()!.stock > 0) {
+              <span class="ml-4 inline-flex items-center text-sm text-green-600 bg-green-100 px-2 py-1 rounded-full w-fit">
                 <i class="fas fa-check-circle mr-1"></i>
-                In Stock ({{ product.stock }} available)
+                In Stock ({{ product()!.stock }} available)
               </span>
             } @else {
-              <span class="ml-4 text-sm text-red-600 bg-red-100 px-2 py-1 rounded-full flex items-center">
+              <span class="ml-4 inline-flex items-center text-sm text-red-600 bg-red-100 px-2 py-1 rounded-full w-fit">
                 <i class="fas fa-times-circle mr-1"></i>
                 Out of Stock
               </span>
@@ -64,7 +75,7 @@
               <i class="fas fa-info-circle mr-2"></i>
               Description
             </h3>
-            <p class="text-gray-600 leading-relaxed">{{ product.description }}</p>
+            <p class="text-gray-600 leading-relaxed">{{ product()!.description }}</p>
           </div>
 
           <div class="mb-6">
@@ -74,11 +85,11 @@
             </h3>
             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
               <i class="fas fa-tag mr-1"></i>
-              {{ product.category }}
+              {{ product()!.category }}
             </span>
           </div>
 
-          @if (product.stock > 0) {
+          @if (product()!.stock > 0) {
             <!-- Add to Cart Section -->
             <div class="border-t border-gray-200 pt-6">
               <div class="flex items-center space-x-4 mb-4">
@@ -86,13 +97,26 @@
                   <i class="fas fa-hashtag mr-2"></i>
                   Quantity:
                 </label>
-                <select [(ngModel)]="quantity" 
-                        id="quantity"
-                        class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
-                  @for (i of [1,2,3,4,5,6,7,8,9,10]; track i) {
-                    <option [value]="i">{{ i }}</option>
-                  }
-                </select>
+                <div class="flex items-center space-x-2">
+                  <button (click)="updateQuantity(-1)" 
+                          [disabled]="quantity() <= 1"
+                          class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i class="fas fa-minus text-xs"></i>
+                  </button>
+                  <select [value]="quantity()" 
+                          (change)="updateQuantityFromSelect($any($event.target).value)"
+                          id="quantity"
+                          class="border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-center w-16">
+                    @for (i of [1,2,3,4,5,6,7,8,9,10]; track i) {
+                      <option [value]="i">{{ i }}</option>
+                    }
+                  </select>
+                  <button (click)="updateQuantity(1)" 
+                          [disabled]="quantity() >= (product()?.stock || 10)"
+                          class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i class="fas fa-plus text-xs"></i>
+                  </button>
+                </div>
               </div>
               
               <button (click)="addToCart()" 

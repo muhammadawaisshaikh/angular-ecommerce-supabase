@@ -44,6 +44,29 @@ export class ProductsStore {
     return Array.from(categories).sort();
   });
 
+  // Get product by ID
+  getProductById(id: string) {
+    return computed(() => {
+      return this._state().products.find(product => product.id === id) || null;
+    });
+  }
+
+  // Set a single product (useful for product detail pages)
+  setSingleProduct(product: Product): void {
+    const currentProducts = this._state().products;
+    const existingIndex = currentProducts.findIndex(p => p.id === product.id);
+    
+    if (existingIndex >= 0) {
+      // Update existing product
+      const updatedProducts = [...currentProducts];
+      updatedProducts[existingIndex] = product;
+      this.setProducts(updatedProducts);
+    } else {
+      // Add new product to the list
+      this.setProducts([...currentProducts, product]);
+    }
+  }
+
   // Actions
   setLoading(loading: boolean): void {
     this._state.update(state => ({

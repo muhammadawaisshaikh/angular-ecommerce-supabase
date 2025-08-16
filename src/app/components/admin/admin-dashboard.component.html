@@ -18,7 +18,7 @@
           </div>
           <div class="ml-4">
             <p class="text-sm font-medium text-gray-600">Total Sales</p>
-            <p class="text-2xl font-bold text-gray-900">${{ stats.totalSales.toFixed(2) }}</p>
+            <p class="text-2xl font-bold text-gray-900">₨{{ stats.totalSales.toFixed(2) }}</p>
           </div>
         </div>
       </div>
@@ -115,7 +115,7 @@
                       {{ order.user_id ? order.user_id.substring(0, 8) : 'N/A' }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      ${{ order.total_amount ? order.total_amount.toFixed(2) : '0.00' }}
+                      ₨{{ order.total_amount ? order.total_amount.toFixed(2) : '0.00' }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                       <span [class]="getStatusClass(order.status || 'pending')" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
@@ -166,7 +166,7 @@
                   <i class="fas fa-tag mr-1"></i>
                   {{ product.category }}
                 </p>
-                <p class="text-lg font-bold text-indigo-600">${{ product.price }}</p>
+                <p class="text-lg font-bold text-indigo-600">₨{{ product.price }}</p>
                 <p class="text-sm text-gray-500 flex items-center">
                   <i class="fas fa-boxes mr-1"></i>
                   Stock: {{ product.stock }}

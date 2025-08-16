@@ -40,7 +40,7 @@
                        class="w-16 h-16 object-cover rounded-md">
                   <div class="flex-1 min-w-0">
                     <h3 class="text-sm font-medium text-gray-900 truncate">{{ item.product.name }}</h3>
-                    <p class="text-sm text-gray-500">${{ item.product.price }}</p>
+                    <p class="text-sm text-gray-500">₨{{ item.product.price }}</p>
                   </div>
                   <div class="flex items-center space-x-2">
                     <select (change)="updateQuantity(item.product.id || '', $event)" 
@@ -56,7 +56,7 @@
                     </button>
                   </div>
                   <div class="text-right">
-                    <p class="text-sm font-medium text-gray-900">${{ (item.product.price * item.quantity).toFixed(2) }}</p>
+                    <p class="text-sm font-medium text-gray-900">₨{{ (item.product.price * item.quantity).toFixed(2) }}</p>
                   </div>
                 </div>
               }
@@ -77,21 +77,21 @@
                   <i class="fas fa-shopping-cart mr-2"></i>
                   Subtotal ({{ totalItems() }} items)
                 </span>
-                <span class="text-gray-900">${{ subtotal().toFixed(2) }}</span>
+                <span class="text-gray-900">₨{{ subtotal().toFixed(2) }}</span>
               </div>
               <div class="flex justify-between text-sm">
                 <span class="text-gray-600 flex items-center">
                   <i class="fas fa-shipping-fast mr-2"></i>
                   Shipping
                 </span>
-                <span class="text-gray-900">{{ shippingCost() === 0 ? 'Free' : '$' + shippingCost().toFixed(2) }}</span>
+                <span class="text-gray-900">{{ shippingCost() === 0 ? 'Free' : '₨' + shippingCost().toFixed(2) }}</span>
               </div>
               <div class="flex justify-between text-sm">
                 <span class="text-gray-600 flex items-center">
                   <i class="fas fa-percentage mr-2"></i>
                   Tax
                 </span>
-                <span class="text-gray-900">${{ (subtotal() * 0.085).toFixed(2) }}</span>
+                <span class="text-gray-900">₨{{ (subtotal() * 0.085).toFixed(2) }}</span>
               </div>
               <div class="border-t border-gray-200 pt-3">
                 <div class="flex justify-between text-base font-medium">
@@ -99,7 +99,7 @@
                     <i class="fas fa-calculator mr-2"></i>
                     Total
                   </span>
-                  <span class="text-gray-900">${{ total().toFixed(2) }}</span>
+                  <span class="text-gray-900">₨{{ total().toFixed(2) }}</span>
                 </div>
               </div>
             </div>
