@@ -2,22 +2,22 @@
 
 A modern e-commerce application built with Angular 20 and Supabase, featuring a responsive design with Tailwind CSS.
 
-## Features
+## 🚀 Features
 
 - **Modern Angular 20** with TypeScript
 - **Supabase Backend** for authentication, database, and storage
 - **Responsive Design** with Tailwind CSS
-- **Server-Side Rendering** (SSR) support
+- **Client-Side Rendering** for optimal performance and simplicity
 - **E-commerce Functionality** including products, cart, and user management
 
-## Prerequisites
+## 📋 Prerequisites
 
 Before you begin, ensure you have the following installed:
 - [Node.js](https://nodejs.org/) (version 18 or higher)
 - [Angular CLI](https://angular.io/cli) (version 20 or higher)
 - [Git](https://git-scm.com/)
 
-## Installation
+## 🛠️ Installation
 
 ### 1. Clone the Repository
 
@@ -97,7 +97,7 @@ To set up your database:
 2. Copy and paste the contents of `database-setup.sql` or `database-setup-safe.sql`
 3. Run the SQL commands
 
-## Running the Application
+## 🚀 Running the Application
 
 ### Development Server
 
@@ -179,7 +179,7 @@ The application includes a comprehensive e-commerce database schema with:
 
 ### Other Platforms
 
-The app supports SSR and can be deployed to any Node.js hosting platform.
+The app can be deployed to any static hosting platform since it's a client-side only application.
 
 ## 🤝 Contributing
 

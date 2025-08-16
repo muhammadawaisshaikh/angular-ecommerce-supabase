@@ -18,7 +18,7 @@ export class CartService {
   }
 
   private loadCartFromStorage(): void {
-    // Check if localStorage is available (not during SSR)
+    // Check if localStorage is available
     if (typeof window !== 'undefined' && window.localStorage) {
       const savedCart = localStorage.getItem('cart');
       if (savedCart) {
@@ -34,7 +34,7 @@ export class CartService {
   }
 
   private saveCartToStorage(): void {
-    // Check if localStorage is available (not during SSR)
+    // Check if localStorage is available
     if (typeof window !== 'undefined' && window.localStorage) {
       localStorage.setItem('cart', JSON.stringify(this.cartItems.value));
     }
@@ -87,7 +87,7 @@ export class CartService {
 
   clearCart(): void {
     this.cartItems.next([]);
-    // Check if localStorage is available (not during SSR)
+    // Check if localStorage is available
     if (typeof window !== 'undefined' && window.localStorage) {
       localStorage.removeItem('cart');
     }
