@@ -105,21 +105,21 @@
                 @for (order of recentOrders; track order.id) {
                   <tr>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {{ order.id?.substring(0, 8) }}
+                      {{ order.id ? order.id.substring(0, 8) : 'N/A' }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {{ order.user_id?.substring(0, 8) }}
+                      {{ order.user_id ? order.user_id.substring(0, 8) : 'N/A' }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      ${{ order.total_amount.toFixed(2) }}
+                      ${{ order.total_amount ? order.total_amount.toFixed(2) : '0.00' }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                      <span [class]="getStatusClass(order.status)" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
-                        {{ order.status }}
+                      <span [class]="getStatusClass(order.status || 'pending')" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
+                        {{ order.status || 'pending' }}
                       </span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {{ order.created_at | date:'short' }}
+                      {{ order.created_at ? (order.created_at | date:'short') : 'N/A' }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <select (change)="updateOrderStatus(order.id || '', $event)" 
