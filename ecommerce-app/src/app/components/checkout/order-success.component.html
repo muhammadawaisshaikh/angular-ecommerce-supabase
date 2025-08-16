@@ -1,60 +1,67 @@
-<div class="container py-12">
-  <div class="max-w-2xl mx-auto text-center">
-    <!-- Success Icon -->
-    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-6">
-      <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-      </svg>
-    </div>
+<div class="bg-gray-50 min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="text-center">
+      <!-- Success Icon -->
+      <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+        <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+      </div>
 
-    <!-- Success Message -->
-    <h1 class="text-3xl font-bold text-gray-900 mb-4">Order Placed Successfully!</h1>
-    <p class="text-lg text-gray-600 mb-6">
-      Thank you for your order. We've received your request and will process it shortly.
-    </p>
-
-    <!-- Order Details -->
-    <div *ngIf="orderId" class="bg-gray-50 rounded-lg p-6 mb-8">
-      <h2 class="text-lg font-semibold text-gray-900 mb-2">Order Details</h2>
-      <p class="text-gray-600">Order ID: <span class="font-mono font-medium">{{ orderId }}</span></p>
-      <p class="text-sm text-gray-500 mt-2">
-        You will receive an email confirmation with order details and tracking information.
+      <!-- Success Message -->
+      <h1 class="text-3xl font-bold text-gray-900 mb-4">Order Placed Successfully!</h1>
+      <p class="text-lg text-gray-600 mb-6">
+        Thank you for your order. We've received your request and will process it shortly.
       </p>
-    </div>
 
-    <!-- Next Steps -->
-    <div class="bg-blue-50 rounded-lg p-6 mb-8">
-      <h3 class="text-lg font-semibold text-blue-900 mb-3">What's Next?</h3>
-      <ul class="text-left text-blue-800 space-y-2">
-        <li class="flex items-center">
-          <span class="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>
-          Order confirmation email sent
-        </li>
-        <li class="flex items-center">
-          <span class="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>
-          Order processing and preparation
-        </li>
-        <li class="flex items-center">
-          <span class="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>
-          Shipping and delivery updates
-        </li>
-      </ul>
-    </div>
+      <!-- Order ID -->
+      @if (orderId) {
+        <div class="bg-white rounded-lg shadow p-6 mb-8 max-w-md mx-auto">
+          <h2 class="text-lg font-medium text-gray-900 mb-2">Order Details</h2>
+          <p class="text-sm text-gray-600 mb-1">Order ID:</p>
+          <p class="text-lg font-mono text-indigo-600 bg-gray-50 p-2 rounded">{{ orderId }}</p>
+        </div>
+      }
 
-    <!-- Action Buttons -->
-    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-      <a routerLink="/products" class="btn btn-primary">
-        Continue Shopping
-      </a>
-      <a routerLink="/" class="btn btn-secondary">
-        Back to Home
-      </a>
-    </div>
+      <!-- Next Steps -->
+      <div class="bg-white rounded-lg shadow p-6 mb-8 max-w-2xl mx-auto">
+        <h2 class="text-lg font-medium text-gray-900 mb-4">What happens next?</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+          <div class="text-center">
+            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <span class="text-blue-600 font-bold text-lg">1</span>
+            </div>
+            <h3 class="font-medium text-gray-900 mb-1">Order Confirmed</h3>
+            <p class="text-sm text-gray-600">We'll send you an email confirmation</p>
+          </div>
+          <div class="text-center">
+            <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <span class="text-yellow-600 font-bold text-lg">2</span>
+            </div>
+            <h3 class="font-medium text-gray-900 mb-1">Processing</h3>
+            <p class="text-sm text-gray-600">We'll prepare and ship your order</p>
+          </div>
+          <div class="text-center">
+            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <span class="text-green-600 font-bold text-lg">3</span>
+            </div>
+            <h3 class="font-medium text-gray-900 mb-1">Delivered</h3>
+            <p class="text-sm text-gray-600">Your order arrives at your door</p>
+          </div>
+        </div>
+      </div>
 
-    <!-- Contact Information -->
-    <div class="mt-12 text-center">
-      <p class="text-gray-600 mb-2">Have questions about your order?</p>
-      <p class="text-indigo-600 font-medium">Contact us at support@estore.com</p>
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a routerLink="/products" 
+           class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+          Continue Shopping
+        </a>
+        <a routerLink="/" 
+           class="inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+          Back to Home
+        </a>
+      </div>
     </div>
   </div>
 </div> 
