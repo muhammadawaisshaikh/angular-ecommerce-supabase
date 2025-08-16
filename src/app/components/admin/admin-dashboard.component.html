@@ -2,7 +2,10 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Header -->
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
+      <h1 class="text-3xl font-bold text-gray-900 mb-2 flex items-center">
+        <i class="fas fa-tachometer-alt mr-3"></i>
+        Admin Dashboard
+      </h1>
       <p class="text-gray-600">Manage products, orders, and view analytics</p>
     </div>
 
@@ -11,9 +14,7 @@
       <div class="bg-white rounded-lg shadow p-6">
         <div class="flex items-center">
           <div class="p-2 bg-blue-100 rounded-lg">
-            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-            </svg>
+            <i class="fas fa-dollar-sign text-xl text-blue-600"></i>
           </div>
           <div class="ml-4">
             <p class="text-sm font-medium text-gray-600">Total Sales</p>
@@ -25,9 +26,7 @@
       <div class="bg-white rounded-lg shadow p-6">
         <div class="flex items-center">
           <div class="p-2 bg-green-100 rounded-lg">
-            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
+            <i class="fas fa-shopping-bag text-xl text-green-600"></i>
           </div>
           <div class="ml-4">
             <p class="text-sm font-medium text-gray-600">Active Orders</p>
@@ -39,9 +38,7 @@
       <div class="bg-white rounded-lg shadow p-6">
         <div class="flex items-center">
           <div class="p-2 bg-yellow-100 rounded-lg">
-            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-            </svg>
+            <i class="fas fa-boxes text-xl text-yellow-600"></i>
           </div>
           <div class="ml-4">
             <p class="text-sm font-medium text-gray-600">Total Products</p>
@@ -53,9 +50,7 @@
       <div class="bg-white rounded-lg shadow p-6">
         <div class="flex items-center">
           <div class="p-2 bg-purple-100 rounded-lg">
-            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-            </svg>
+            <i class="fas fa-chart-line text-xl text-purple-600"></i>
           </div>
           <div class="ml-4">
             <p class="text-sm font-medium text-gray-600">Top Products</p>
@@ -67,14 +62,19 @@
 
     <!-- Quick Actions -->
     <div class="mb-8">
-      <h2 class="text-lg font-medium text-gray-900 mb-4">Quick Actions</h2>
+      <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
+        <i class="fas fa-bolt mr-2"></i>
+        Quick Actions
+      </h2>
       <div class="flex space-x-4">
         <button (click)="showAddProductModal = true" 
-                class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
+                class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 flex items-center">
+          <i class="fas fa-plus mr-2"></i>
           Add Product
         </button>
         <button (click)="refreshData()" 
-                class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700">
+                class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 flex items-center">
+          <i class="fas fa-redo mr-2"></i>
           Refresh Data
         </button>
       </div>
@@ -83,9 +83,13 @@
     <!-- Recent Orders -->
     <div class="bg-white shadow rounded-lg mb-8">
       <div class="px-4 py-5 sm:p-6">
-        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Recent Orders</h3>
+        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4 flex items-center">
+          <i class="fas fa-list-alt mr-2"></i>
+          Recent Orders
+        </h3>
         @if (recentOrders.length === 0) {
           <div class="text-center py-8">
+            <i class="fas fa-inbox text-4xl text-gray-400 mb-3"></i>
             <p class="text-gray-500">No orders found</p>
           </div>
         } @else {
@@ -141,9 +145,13 @@
     <!-- Top Products -->
     <div class="bg-white shadow rounded-lg">
       <div class="px-4 py-5 sm:p-6">
-        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Top Products</h3>
+        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4 flex items-center">
+          <i class="fas fa-star mr-2"></i>
+          Top Products
+        </h3>
         @if (stats.topSellingProducts.length === 0) {
           <div class="text-center py-8">
+            <i class="fas fa-box-open text-4xl text-gray-400 mb-3"></i>
             <p class="text-gray-500">No products found</p>
           </div>
         } @else {
@@ -154,9 +162,15 @@
                      [alt]="product.name"
                      class="w-full h-32 object-cover rounded-md mb-3">
                 <h4 class="font-medium text-gray-900 mb-1">{{ product.name }}</h4>
-                <p class="text-sm text-gray-500 mb-2">{{ product.category }}</p>
+                <p class="text-sm text-gray-500 mb-2 flex items-center">
+                  <i class="fas fa-tag mr-1"></i>
+                  {{ product.category }}
+                </p>
                 <p class="text-lg font-bold text-indigo-600">${{ product.price }}</p>
-                <p class="text-sm text-gray-500">Stock: {{ product.stock }}</p>
+                <p class="text-sm text-gray-500 flex items-center">
+                  <i class="fas fa-boxes mr-1"></i>
+                  Stock: {{ product.stock }}
+                </p>
               </div>
             }
           </div>
@@ -170,45 +184,68 @@
     <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
       <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
         <div class="mt-3">
-          <h3 class="text-lg font-medium text-gray-900 mb-4">Add New Product</h3>
+          <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
+            <i class="fas fa-plus-circle mr-2"></i>
+            Add New Product
+          </h3>
           <form (ngSubmit)="addProduct()" class="space-y-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700">Name</label>
+              <label class="block text-sm font-medium text-gray-700 flex items-center">
+                <i class="fas fa-tag mr-2"></i>
+                Name
+              </label>
               <input type="text" [(ngModel)]="newProduct.name" name="name" required
                      class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700">Description</label>
+              <label class="block text-sm font-medium text-gray-700 flex items-center">
+                <i class="fas fa-align-left mr-2"></i>
+                Description
+              </label>
               <textarea [(ngModel)]="newProduct.description" name="description" required
                         class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2"></textarea>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700">Price</label>
+              <label class="block text-sm font-medium text-gray-700 flex items-center">
+                <i class="fas fa-dollar-sign mr-2"></i>
+                Price
+              </label>
               <input type="number" [(ngModel)]="newProduct.price" name="price" required step="0.01"
                      class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700">Stock</label>
+              <label class="block text-sm font-medium text-gray-700 flex items-center">
+                <i class="fas fa-boxes mr-2"></i>
+                Stock
+              </label>
               <input type="number" [(ngModel)]="newProduct.stock" name="stock" required
                      class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700">Category</label>
+              <label class="block text-sm font-medium text-gray-700 flex items-center">
+                <i class="fas fa-folder mr-2"></i>
+                Category
+              </label>
               <input type="text" [(ngModel)]="newProduct.category" name="category" required
                      class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700">Image URL</label>
+              <label class="block text-sm font-medium text-gray-700 flex items-center">
+                <i class="fas fa-image mr-2"></i>
+                Image URL
+              </label>
               <input type="url" [(ngModel)]="newProduct.image_url" name="image_url" required
                      class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2">
             </div>
             <div class="flex justify-end space-x-3">
               <button type="button" (click)="showAddProductModal = false"
-                      class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400">
+                      class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 flex items-center">
+                <i class="fas fa-times mr-2"></i>
                 Cancel
               </button>
               <button type="submit" 
-                      class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
+                      class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 flex items-center">
+                <i class="fas fa-check mr-2"></i>
                 Add Product
               </button>
             </div>

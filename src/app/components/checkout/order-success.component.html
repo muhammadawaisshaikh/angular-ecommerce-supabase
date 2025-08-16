@@ -3,9 +3,7 @@
     <div class="text-center">
       <!-- Success Icon -->
       <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
-        <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-        </svg>
+        <i class="fas fa-check-circle text-2xl text-green-600"></i>
       </div>
 
       <!-- Success Message -->
@@ -17,16 +15,17 @@
       <!-- Order ID -->
       @if (orderId) {
         <div class="bg-white rounded-lg shadow p-6 mb-8">
-          <h2 class="text-lg font-medium text-gray-900 mb-2">Order Details</h2>
+          <h2 class="text-lg font-medium text-gray-900 mb-2 flex items-center">
+            <i class="fas fa-receipt mr-2"></i>
+            Order Details
+          </h2>
           <p class="text-sm text-gray-600 mb-1">Order ID:</p>
           <div class="flex items-center gap-3 mb-3">
             <p class="text-lg font-mono text-indigo-600 bg-gray-50 p-2 rounded flex-1">{{ orderId }}</p>
             <button 
               (click)="copyOrderUrl()"
               class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
-              <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-              </svg>
+              <i class="fas fa-copy mr-1"></i>
               Copy
             </button>
           </div>
@@ -35,11 +34,13 @@
           @if (showCopyMessage) {
             <div class="mt-2 p-2 rounded text-sm" 
                  [class]="copyMessage.includes('Failed') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'">
+              <i class="fas fa-info-circle mr-1"></i>
               {{ copyMessage }}
             </div>
           }
           
-          <p class="text-xs text-gray-500 mt-2">
+          <p class="text-xs text-gray-500 mt-2 flex items-center">
+            <i class="fas fa-lightbulb mr-1"></i>
             Click the copy button to copy the complete order URL to your clipboard
           </p>
         </div>
@@ -47,25 +48,28 @@
 
       <!-- Next Steps -->
       <div class="bg-white rounded-lg shadow p-6 mb-8">
-        <h2 class="text-lg font-medium text-gray-900 mb-4">What happens next?</h2>
+        <h2 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
+          <i class="fas fa-route mr-2"></i>
+          What happens next?
+        </h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
           <div class="text-center">
             <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <span class="text-blue-600 font-bold text-lg">1</span>
+              <i class="fas fa-check text-xl text-blue-600"></i>
             </div>
             <h3 class="font-medium text-gray-900 mb-1">Order Confirmed</h3>
             <p class="text-sm text-gray-600">We'll send you an email confirmation</p>
           </div>
           <div class="text-center">
             <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <span class="text-yellow-600 font-bold text-lg">2</span>
+              <i class="fas fa-cog text-xl text-yellow-600"></i>
             </div>
             <h3 class="font-medium text-gray-900 mb-1">Processing</h3>
             <p class="text-sm text-gray-600">We'll prepare and ship your order</p>
           </div>
           <div class="text-center">
             <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-              <span class="text-green-600 font-bold text-lg">3</span>
+              <i class="fas fa-truck text-xl text-green-600"></i>
             </div>
             <h3 class="font-medium text-gray-900 mb-1">Delivered</h3>
             <p class="text-sm text-gray-600">Your order arrives at your door</p>
@@ -77,10 +81,12 @@
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
         <a routerLink="/products" 
            class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+          <i class="fas fa-shopping-bag mr-2"></i>
           Continue Shopping
         </a>
         <a routerLink="/" 
            class="inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+          <i class="fas fa-home mr-2"></i>
           Back to Home
         </a>
       </div>
