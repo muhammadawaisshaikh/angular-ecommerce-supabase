@@ -1,8 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { SupabaseService, Product } from '../../services/supabase.service';
-import { CartService } from '../../services/cart.service';
+import { RouterLink, Router, NavigationEnd } from '@angular/router';
+import { filter, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { SupabaseService } from '../../services/supabase.service';
+import { CartStore } from '../../services/cart.store';
+import { ProductsStore } from '../../services/products.store';
+import { computed } from '@angular/core';
 
 @Component({
   selector: 'app-home',
@@ -11,47 +15,64 @@ import { CartService } from '../../services/cart.service';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
-export class HomeComponent implements OnInit {
-  featuredProducts: Product[] = [];
-  isLoading = true;
-  error = '';
-  hasData = false;
+export class HomeComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  private router = inject(Router);
+  private supabaseService = inject(SupabaseService);
+  private cartStore = inject(CartStore);
+  private productsStore = inject(ProductsStore);
 
-  constructor(
-    private supabaseService: SupabaseService,
-    private cartService: CartService
-  ) {}
+  // Use signals from the store
+  readonly featuredProducts = this.productsStore.featuredProducts;
+  readonly isLoading = this.productsStore.isLoading;
+  readonly error = this.productsStore.error;
+  readonly hasData = this.productsData;
 
-  async ngOnInit(): Promise<void> {
-    await this.loadFeaturedProducts();
+  constructor() {
+    // Listen to navigation events to reload products when returning to home
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd),
+      takeUntil(this.destroy$)
+    ).subscribe((event: NavigationEnd) => {
+      if (event.url === '/' || event.url === '/home') {
+        this.loadFeaturedProducts();
+      }
+    });
+  }
+
+  ngOnInit(): void {
+    this.loadFeaturedProducts();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   async loadFeaturedProducts(): Promise<void> {
     try {
-      this.isLoading = true;
-      this.error = '';
+      // Clear any previous errors
+      this.productsStore.clearError();
       
-      const products = await this.supabaseService.getProducts();
-      
-      this.featuredProducts = products.slice(0, 8); // Show first 8 products
-      this.hasData = this.featuredProducts.length > 0;
-      
-      if (!this.hasData) {
-        this.error = 'No featured products available.';
-      }
+      // Load products (this will use the store's caching logic)
+      await this.supabaseService.getProducts();
     } catch (error) {
-      this.error = 'Failed to load featured products.';
-      this.hasData = false;
-    } finally {
-      this.isLoading = false;
+      console.error('Error loading featured products:', error);
     }
   }
 
   async refreshProducts(): Promise<void> {
+    // Force refresh by resetting the store
+    this.productsStore.reset();
     await this.loadFeaturedProducts();
   }
 
-  addToCart(product: Product): void {
-    this.cartService.addToCart(product);
+  addToCart(product: any): void {
+    this.cartStore.addToCart(product);
+  }
+
+  // Computed signal for hasData
+  private get productsData() {
+    return computed(() => this.productsStore.hasData());
   }
 } 
