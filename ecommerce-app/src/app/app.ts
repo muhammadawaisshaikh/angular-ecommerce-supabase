@@ -1,12 +1,201 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { SupabaseService } from './services/supabase.service';
+import { CartService } from './services/cart.service';
+import { User } from '@supabase/supabase-js';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.scss'
+  standalone: true,
+  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
+  template: `
+    <header class="bg-white shadow-sm border-b">
+      <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <!-- Logo -->
+          <div class="flex-shrink-0">
+            <a routerLink="/" class="text-2xl font-bold text-indigo-600">
+              eStore
+            </a>
+          </div>
+
+          <!-- Navigation Links -->
+          <div class="hidden md:block">
+            <div class="ml-10 flex items-baseline space-x-4">
+              <a routerLink="/" 
+                 routerLinkActive="bg-indigo-100 text-indigo-700"
+                 class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
+                Home
+              </a>
+              <a routerLink="/products" 
+                 routerLinkActive="bg-indigo-100 text-indigo-700"
+                 class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
+                Products
+              </a>
+              <a *ngIf="currentUser" routerLink="/orders" 
+                 routerLinkActive="bg-indigo-100 text-indigo-700"
+                 class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
+                My Orders
+              </a>
+              <a *ngIf="isAdmin" routerLink="/admin" 
+                 routerLinkActive="bg-indigo-100 text-indigo-700"
+                 class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
+                Admin
+              </a>
+            </div>
+          </div>
+
+          <!-- Right side - Cart and User -->
+          <div class="flex items-center space-x-4">
+            <!-- Cart -->
+            <a routerLink="/cart" class="relative p-2 text-gray-700 hover:text-indigo-600">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m6 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"></path>
+              </svg>
+              <span *ngIf="cartItemCount > 0" 
+                    class="absolute -top-1 -right-1 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                {{ cartItemCount }}
+              </span>
+            </a>
+
+            <!-- User Menu -->
+            <div *ngIf="currentUser; else authButtons" class="relative">
+              <button (click)="toggleUserMenu()" 
+                      class="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <span class="sr-only">Open user menu</span>
+                <div class="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center">
+                  <span class="text-white font-medium">{{ (currentUser.email || 'U').charAt(0).toUpperCase() }}</span>
+                </div>
+              </button>
+              
+              <!-- Dropdown Menu -->
+              <div *ngIf="showUserMenu" 
+                   class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <a routerLink="/profile" 
+                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                  Profile
+                </a>
+                <button (click)="signOut()" 
+                        class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                  Sign out
+                </button>
+              </div>
+            </div>
+
+            <ng-template #authButtons>
+              <a routerLink="/login" 
+                 class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">
+                Sign in
+              </a>
+              <a routerLink="/register" 
+                 class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                Sign up
+              </a>
+            </ng-template>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="min-h-screen bg-gray-50">
+      <router-outlet></router-outlet>
+    </main>
+
+    <footer class="bg-gray-800 text-white">
+      <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div>
+            <h3 class="text-lg font-semibold mb-4">eStore</h3>
+            <p class="text-gray-300">Your trusted online shopping destination</p>
+          </div>
+          <div>
+            <h4 class="text-md font-semibold mb-4">Quick Links</h4>
+            <ul class="space-y-2">
+              <li><a routerLink="/" class="text-gray-300 hover:text-white">Home</a></li>
+              <li><a routerLink="/products" class="text-gray-300 hover:text-white">Products</a></li>
+              <li><a routerLink="/about" class="text-gray-300 hover:text-white">About</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-md font-semibold mb-4">Customer Service</h4>
+            <ul class="space-y-2">
+              <li><a routerLink="/contact" class="text-gray-300 hover:text-white">Contact</a></li>
+              <li><a routerLink="/shipping" class="text-gray-300 hover:text-white">Shipping Info</a></li>
+              <li><a routerLink="/returns" class="text-gray-300 hover:text-white">Returns</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-md font-semibold mb-4">Connect</h4>
+            <div class="flex space-x-4">
+              <a href="#" class="text-gray-300 hover:text-white">
+                <span class="sr-only">Facebook</span>
+                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd"></path>
+                </svg>
+              </a>
+              <a href="#" class="text-gray-300 hover:text-white">
+                <span class="sr-only">Instagram</span>
+                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123v-.08c0-2.643.012-2.987.06-4.043.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 16.285c-.636-.247-1.363-.416-2.427-.465-1.067-.048-1.407-.06-4.123v-.08c0-2.643.012-2.987.06-4.043.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.285c.636-.247 1.363-.416 2.427-.465C9.901 2.013 10.256 2 12.315 2z" clip-rule="evenodd"></path>
+                </svg>
+              </a>
+              <a href="#" class="text-gray-300 hover:text-white">
+                <span class="sr-only">Twitter</span>
+                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="mt-8 border-t border-gray-700 pt-8">
+          <p class="text-center text-gray-300">&copy; 2024 eStore. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  `,
+  styles: [`
+    :host {
+      display: block;
+    }
+  `]
 })
-export class App {
-  protected readonly title = signal('ecommerce-app');
+export class AppComponent implements OnInit {
+  currentUser: User | null = null;
+  cartItemCount = 0;
+  showUserMenu = false;
+  isAdmin = false;
+
+  constructor(
+    private supabaseService: SupabaseService,
+    private cartService: CartService
+  ) {}
+
+  ngOnInit(): void {
+    this.supabaseService.getCurrentUser().subscribe(user => {
+      this.currentUser = user;
+      if (user) {
+        this.checkAdminStatus(user.id);
+      }
+    });
+
+    this.cartService.getCartItems().subscribe(items => {
+      this.cartItemCount = this.cartService.getCartItemCount();
+    });
+  }
+
+  async checkAdminStatus(userId: string): Promise<void> {
+    const profile = await this.supabaseService.getUserProfile(userId);
+    this.isAdmin = profile?.role === 'admin';
+  }
+
+  toggleUserMenu(): void {
+    this.showUserMenu = !this.showUserMenu;
+  }
+
+  async signOut(): Promise<void> {
+    await this.supabaseService.signOut();
+    this.showUserMenu = false;
+  }
 }

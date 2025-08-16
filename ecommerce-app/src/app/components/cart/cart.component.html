@@ -1,0 +1,100 @@
+<div class="bg-white min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">Shopping Cart</h1>
+
+    <div *ngIf="cartItems.length > 0; else emptyCart" class="lg:grid lg:grid-cols-12 lg:gap-x-12 lg:items-start">
+      <!-- Cart Items -->
+      <div class="lg:col-span-7">
+        <div class="border-t border-b border-gray-200 divide-y divide-gray-200">
+          <div *ngFor="let item of cartItems" class="py-6 flex">
+            <div class="flex-shrink-0 w-24 h-24">
+              <img [src]="item.product.image_url" 
+                   [alt]="item.product.name"
+                   class="w-full h-full object-cover rounded-md">
+            </div>
+
+            <div class="ml-4 flex-1 flex flex-col">
+              <div>
+                <div class="flex justify-between text-base font-medium text-gray-900">
+                  <h3>
+                    <a [routerLink]="['/product', item.product.id]">{{ item.product.name }}</a>
+                  </h3>
+                  <p class="ml-4">${{ (item.product.price * item.quantity).toFixed(2) }}</p>
+                </div>
+                <p class="mt-1 text-sm text-gray-500">{{ item.product.category }}</p>
+              </div>
+              <div class="flex-1 flex items-end justify-between text-sm">
+                <div class="flex items-center">
+                  <label class="mr-2 text-gray-700">Qty:</label>
+                  <select [value]="item.quantity" 
+                          (change)="updateQuantity(item.product.id!, $event)"
+                          class="border border-gray-300 rounded-md px-2 py-1">
+                    <option *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]" [value]="i">{{ i }}</option>
+                  </select>
+                </div>
+
+                <button (click)="removeFromCart(item.product.id!)" 
+                        class="text-indigo-600 hover:text-indigo-500">
+                  Remove
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="lg:col-span-5 mt-10 lg:mt-0">
+        <div class="bg-gray-50 rounded-lg p-6">
+          <h2 class="text-lg font-medium text-gray-900 mb-4">Order Summary</h2>
+          
+          <div class="space-y-4">
+            <div class="flex justify-between text-sm">
+              <span>Subtotal ({{ totalItems }} items)</span>
+              <span>${{ subtotal.toFixed(2) }}</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span>Shipping</span>
+              <span>{{ shippingCost === 0 ? 'Free' : '$' + shippingCost.toFixed(2) }}</span>
+            </div>
+            <div class="border-t border-gray-200 pt-4">
+              <div class="flex justify-between text-base font-medium text-gray-900">
+                <span>Total</span>
+                <span>${{ total.toFixed(2) }}</span>
+              </div>
+              <p class="text-sm text-gray-500 mt-1">Including tax</p>
+            </div>
+          </div>
+
+          <button (click)="proceedToCheckout()" 
+                  class="w-full bg-indigo-600 text-white py-3 px-4 rounded-md hover:bg-indigo-700 transition duration-300 mt-6">
+            Proceed to Checkout
+          </button>
+
+          <div class="mt-4 text-center">
+            <a routerLink="/products" 
+               class="text-indigo-600 hover:text-indigo-500 text-sm">
+              Continue Shopping
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #emptyCart>
+      <div class="text-center py-12">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m6 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"></path>
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">Your cart is empty</h3>
+        <p class="mt-1 text-sm text-gray-500">Start shopping to add items to your cart.</p>
+        <div class="mt-6">
+          <a routerLink="/products" 
+             class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+            Start Shopping
+          </a>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</div> 
