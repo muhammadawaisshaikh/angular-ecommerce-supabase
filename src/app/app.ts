@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
-import { CartService } from './services/cart.service';
+import { CartStore } from './services/cart.store';
 
 @Component({
   selector: 'app-root',
@@ -10,16 +10,9 @@ import { CartService } from './services/cart.service';
   templateUrl: './app.html',
   styleUrls: ['./app.scss']
 })
-export class AppComponent implements OnInit {
-  cartItemCount = 0;
+export class AppComponent {
+  private cartStore = inject(CartStore);
 
-  constructor(
-    private cartService: CartService
-  ) {}
-
-  ngOnInit(): void {
-    this.cartService.getCartItems().subscribe(items => {
-      this.cartItemCount = this.cartService.getCartItemCount();
-    });
-  }
+  // Use signal from the store
+  readonly cartItemCount = this.cartStore.itemCount;
 }

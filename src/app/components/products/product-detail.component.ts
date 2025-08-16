@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService, Product } from '../../services/supabase.service';
-import { CartService } from '../../services/cart.service';
+import { CartStore } from '../../services/cart.store';
 
 @Component({
   selector: 'app-product-detail',
@@ -13,17 +13,15 @@ import { CartService } from '../../services/cart.service';
   styleUrls: ['./product-detail.component.scss']
 })
 export class ProductDetailComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private supabaseService = inject(SupabaseService);
+  private cartStore = inject(CartStore);
+
   product: Product | null = null;
   quantity = 1;
   isLoading = true;
   error = '';
-
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private supabaseService: SupabaseService,
-    private cartService: CartService
-  ) {}
 
   async ngOnInit(): Promise<void> {
     const productId = this.route.snapshot.paramMap.get('id');
@@ -51,7 +49,7 @@ export class ProductDetailComponent implements OnInit {
 
   addToCart(): void {
     if (this.product && this.quantity > 0) {
-      this.cartService.addToCart(this.product, this.quantity);
+      this.cartStore.addToCart(this.product, this.quantity);
       // Show success message or redirect to cart
     }
   }

@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { CartService, CartItem } from '../../services/cart.service';
+import { CartStore } from '../../services/cart.store';
+import { computed } from '@angular/core';
 
 @Component({
   selector: 'app-cart',
@@ -10,42 +11,36 @@ import { CartService, CartItem } from '../../services/cart.service';
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss']
 })
-export class CartComponent implements OnInit {
-  cartItems: CartItem[] = [];
-  subtotal = 0;
-  shippingCost = 0;
-  total = 0;
-  totalItems = 0;
+export class CartComponent {
+  private cartStore = inject(CartStore);
 
-  constructor(private cartService: CartService) {}
+  // Use signals from the store
+  readonly cartItems = this.cartStore.items;
+  readonly subtotal = this.cartStore.total;
+  readonly totalItems = this.cartStore.itemCount;
+  readonly isEmpty = this.cartStore.isEmpty;
 
-  ngOnInit(): void {
-    this.cartService.getCartItems().subscribe(items => {
-      this.cartItems = items;
-      this.calculateTotals();
-    });
-  }
+  // Computed signals for cart totals
+  readonly shippingCost = computed(() => {
+    const subtotal = this.subtotal();
+    return subtotal >= 50 ? 0 : 5.99;
+  });
 
-  calculateTotals(): void {
-    this.subtotal = this.cartService.getCartTotal();
-    this.totalItems = this.cartService.getCartItemCount();
-    
-    // Free shipping on orders over $50
-    this.shippingCost = this.subtotal >= 50 ? 0 : 5.99;
-    
-    // Add tax (assuming 8.5% tax rate)
-    const tax = this.subtotal * 0.085;
-    this.total = this.subtotal + this.shippingCost + tax;
-  }
+  readonly total = computed(() => {
+    const subtotal = this.subtotal();
+    const shipping = this.shippingCost();
+    const tax = subtotal * 0.085; // 8.5% tax
+    return subtotal + shipping + tax;
+  });
 
   updateQuantity(productId: string, event: Event): void {
     const select = event.target as HTMLSelectElement;
     const quantity = parseInt(select.value);
-    this.cartService.updateQuantity(productId, quantity);
+    this.cartStore.updateQuantity(productId, quantity);
   }
 
   removeFromCart(productId: string): void {
-    this.cartService.removeFromCart(productId);
+    this.cartStore.removeFromCart(productId);
   }
 
   proceedToCheckout(): void {

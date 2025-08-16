@@ -6,7 +6,7 @@
       <p class="text-gray-600">Complete your order</p>
     </div>
 
-    @if (cartItems.length === 0) {
+    @if (cartItems().length === 0) {
       <!-- Empty Cart -->
       <div class="text-center py-12">
         <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -149,7 +149,7 @@
           
           <!-- Cart Items -->
           <div class="space-y-4 mb-6">
-            @for (item of cartItems; track item.product.id) {
+            @for (item of cartItems(); track item.product.id) {
               <div class="flex items-center space-x-4">
                 <img [src]="item.product.image_url" 
                      [alt]="item.product.name"
@@ -167,20 +167,20 @@
           <div class="border-t border-gray-200 pt-4 space-y-2">
             <div class="flex justify-between text-sm">
               <span class="text-gray-600">Subtotal</span>
-              <span class="text-gray-900">${{ subtotal.toFixed(2) }}</span>
+              <span class="text-gray-900">${{ subtotal().toFixed(2) }}</span>
             </div>
             <div class="flex justify-between text-sm">
               <span class="text-gray-600">Shipping</span>
-              <span class="text-gray-900">{{ shippingCost === 0 ? 'Free' : '$' + shippingCost.toFixed(2) }}</span>
+              <span class="text-gray-900">{{ shippingCost() === 0 ? 'Free' : '$' + shippingCost().toFixed(2) }}</span>
             </div>
             <div class="flex justify-between text-sm">
               <span class="text-gray-600">Tax</span>
-              <span class="text-gray-900">${{ tax.toFixed(2) }}</span>
+              <span class="text-gray-900">${{ tax().toFixed(2) }}</span>
             </div>
             <div class="border-t border-gray-200 pt-2">
               <div class="flex justify-between text-base font-medium">
                 <span class="text-gray-900">Total</span>
-                <span class="text-gray-900">${{ total.toFixed(2) }}</span>
+                <span class="text-gray-900">${{ total().toFixed(2) }}</span>
               </div>
             </div>
           </div>

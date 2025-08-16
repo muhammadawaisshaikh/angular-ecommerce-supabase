@@ -25,7 +25,7 @@
     </div>
 
     <!-- Loading State -->
-    @if (isLoading) {
+    @if (isLoading()) {
       <div class="text-center py-12">
         <div class="inline-flex items-center px-4 py-2 font-semibold leading-6 text-indigo-600">
           <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -38,12 +38,12 @@
     }
 
     <!-- Error State -->
-    @if (!isLoading && error) {
+    @if (!isLoading() && error()) {
       <div class="text-center py-12">
         <svg class="mx-auto h-12 w-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
         </svg>
-        <h3 class="mt-2 text-sm font-medium text-gray-900">{{ error }}</h3>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">{{ error() }}</h3>
         <div class="mt-6">
           <button (click)="refreshProducts()" 
                   class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
@@ -54,9 +54,9 @@
     }
 
     <!-- Products Grid -->
-    @if (!isLoading && !error && hasData) {
+    @if (!isLoading() && !error() && hasData()) {
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        @for (product of featuredProducts; track product.id) {
+        @for (product of featuredProducts(); track product.id) {
           <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300">
             <img [src]="product.image_url" 
                  [alt]="product.name"
@@ -86,7 +86,7 @@
     }
 
     <!-- No Products State -->
-    @if (!isLoading && !error && !hasData) {
+    @if (!isLoading() && !error() && !hasData()) {
       <div class="text-center py-12">
         <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
@@ -103,7 +103,7 @@
     }
 
     <!-- View All Products Button -->
-    @if (!isLoading && !error && hasData) {
+    @if (!isLoading() && !error() && hasData()) {
       <div class="text-center mt-12">
         <a routerLink="/products" 
            class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">

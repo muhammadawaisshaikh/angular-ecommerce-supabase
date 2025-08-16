@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient, User, AuthResponse } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { ProductsStore } from './products.store';
 
 export interface Product {
   id?: string;
@@ -53,8 +54,11 @@ export class SupabaseService {
   private supabase: SupabaseClient;
   private currentUser = new BehaviorSubject<User | null>(null);
 
-  constructor() {
-    this.supabase = createClient(environment.supabase.url, environment.supabase.anonKey);
+  constructor(private productsStore: ProductsStore) {
+    this.supabase = createClient(
+      environment.supabase.url,
+      environment.supabase.anonKey
+    );
     this.initializeAuth();
   }
 
@@ -140,34 +144,50 @@ export class SupabaseService {
   // Product methods
   async getProducts(): Promise<Product[]> {
     try {
+      // Check if we need to fetch products
+      if (!this.productsStore.shouldFetchProducts()) {
+        return this.productsStore.products();
+      }
+
+      this.productsStore.setLoading(true);
+      
       const { data, error } = await this.supabase
         .from('products')
         .select('*')
         .order('created_at', { ascending: false });
       
       if (error) {
+        this.productsStore.setError('Failed to load products');
         return [];
       }
       
-      return data || [];
+      const products = data || [];
+      this.productsStore.setProducts(products);
+      return products;
     } catch (err) {
+      this.productsStore.setError('Failed to load products');
       return [];
+    } finally {
+      this.productsStore.setLoading(false);
     }
   }
 
   async getProduct(id: string): Promise<Product | null> {
-    const { data, error } = await this.supabase
-      .from('products')
-      .select('*')
-      .eq('id', id)
-      .single();
-    
-    if (error) {
-      console.error('Error fetching product:', error);
+    try {
+      const { data, error } = await this.supabase
+        .from('products')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        return null;
+      }
+
+      return data;
+    } catch (err) {
       return null;
     }
-    
-    return data;
   }
 
   async createProduct(product: Omit<Product, 'id' | 'created_at' | 'updated_at'>): Promise<Product | null> {
