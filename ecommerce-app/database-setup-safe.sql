@@ -1,0 +1,206 @@
+-- eStore Database Setup Script for Supabase (Safe Version)
+-- Run this in your Supabase SQL Editor - it won't fail on existing objects
+
+-- Create user_profiles table
+CREATE TABLE IF NOT EXISTS user_profiles (
+  id UUID REFERENCES auth.users(id) PRIMARY KEY,
+  email TEXT NOT NULL,
+  full_name TEXT,
+  phone TEXT,
+  address TEXT,
+  role TEXT DEFAULT 'customer' CHECK (role IN ('customer', 'admin')),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create products table
+CREATE TABLE IF NOT EXISTS products (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name TEXT NOT NULL,
+  description TEXT,
+  price DECIMAL(10,2) NOT NULL,
+  stock INTEGER NOT NULL DEFAULT 0,
+  image_url TEXT,
+  category TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create orders table
+CREATE TABLE IF NOT EXISTS orders (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) NOT NULL,
+  products JSONB NOT NULL,
+  total_amount DECIMAL(10,2) NOT NULL,
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'shipped', 'delivered')),
+  shipping_address TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Enable Row Level Security
+ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+
+-- Create policies for user_profiles (with IF NOT EXISTS equivalent)
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'user_profiles' AND policyname = 'Users can view their own profile') THEN
+    CREATE POLICY "Users can view their own profile" ON user_profiles
+      FOR SELECT USING (auth.uid() = id);
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'user_profiles' AND policyname = 'Users can update their own profile') THEN
+    CREATE POLICY "Users can update their own profile" ON user_profiles
+      FOR UPDATE USING (auth.uid() = id);
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'user_profiles' AND policyname = 'Users can insert their own profile') THEN
+    CREATE POLICY "Users can insert their own profile" ON user_profiles
+      FOR INSERT WITH CHECK (auth.uid() = id);
+  END IF;
+END $$;
+
+-- Create policies for products (with IF NOT EXISTS equivalent)
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'products' AND policyname = 'Anyone can view products') THEN
+    CREATE POLICY "Anyone can view products" ON products
+      FOR SELECT USING (true);
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'products' AND policyname = 'Only admins can insert products') THEN
+    CREATE POLICY "Only admins can insert products" ON products
+      FOR INSERT WITH CHECK (
+        EXISTS (
+          SELECT 1 FROM user_profiles 
+          WHERE id = auth.uid() AND role = 'admin'
+        )
+      );
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'products' AND policyname = 'Only admins can update products') THEN
+    CREATE POLICY "Only admins can update products" ON products
+      FOR UPDATE USING (
+        EXISTS (
+          SELECT 1 FROM user_profiles 
+          WHERE id = auth.uid() AND role = 'admin'
+        )
+      );
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'products' AND policyname = 'Only admins can delete products') THEN
+    CREATE POLICY "Only admins can delete products" ON products
+      FOR DELETE USING (
+        EXISTS (
+          SELECT 1 FROM user_profiles 
+          WHERE id = auth.uid() AND role = 'admin'
+        )
+      );
+  END IF;
+END $$;
+
+-- Create policies for orders (with IF NOT EXISTS equivalent)
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'orders' AND policyname = 'Users can view their own orders') THEN
+    CREATE POLICY "Users can view their own orders" ON orders
+      FOR SELECT USING (auth.uid() = user_id);
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'orders' AND policyname = 'Users can insert their own orders') THEN
+    CREATE POLICY "Users can insert their own orders" ON orders
+      FOR INSERT WITH CHECK (auth.uid() = user_id);
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'orders' AND policyname = 'Only admins can update order status') THEN
+    CREATE POLICY "Only admins can update order status" ON orders
+      FOR UPDATE USING (
+        EXISTS (
+          SELECT 1 FROM user_profiles 
+          WHERE id = auth.uid() AND role = 'admin'
+        )
+      );
+  END IF;
+END $$;
+
+-- Create storage bucket for product images
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('product-images', 'product-images', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- Storage policies (with IF NOT EXISTS equivalent)
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'objects' AND policyname = 'Anyone can view product images') THEN
+    CREATE POLICY "Anyone can view product images" ON storage.objects
+      FOR SELECT USING (bucket_id = 'product-images');
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'objects' AND policyname = 'Only admins can upload product images') THEN
+    CREATE POLICY "Only admins can upload product images" ON storage.objects
+      FOR INSERT WITH CHECK (
+        bucket_id = 'product-images' AND
+        EXISTS (
+          SELECT 1 FROM user_profiles 
+          WHERE id = auth.uid() AND role = 'admin'
+        )
+      );
+  END IF;
+END $$;
+
+-- Insert sample products (only if they don't exist)
+INSERT INTO products (name, description, price, stock, image_url, category) 
+SELECT * FROM (VALUES
+  ('Wireless Bluetooth Headphones', 'High-quality wireless headphones with noise cancellation', 99.99, 50, 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400', 'Electronics'),
+  ('Smart Fitness Watch', 'Track your fitness goals with this advanced smartwatch', 199.99, 30, 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400', 'Electronics'),
+  ('Organic Cotton T-Shirt', 'Comfortable and eco-friendly cotton t-shirt', 29.99, 100, 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400', 'Fashion'),
+  ('Stainless Steel Water Bottle', 'Keep your drinks cold for hours with this insulated bottle', 24.99, 75, 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=400', 'Home & Garden'),
+  ('Wireless Charging Pad', 'Convenient wireless charging for your devices', 39.99, 60, 'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=400', 'Electronics'),
+  ('Yoga Mat', 'Premium non-slip yoga mat for your practice', 49.99, 40, 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400', 'Fitness'),
+  ('Ceramic Coffee Mug Set', 'Beautiful handcrafted ceramic mugs, set of 4', 34.99, 80, 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400', 'Home & Garden'),
+  ('Portable Bluetooth Speaker', 'Take your music anywhere with this portable speaker', 79.99, 45, 'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400', 'Electronics')
+) AS v(name, description, price, stock, image_url, category)
+WHERE NOT EXISTS (SELECT 1 FROM products WHERE name = v.name);
+
+-- Create indexes for better performance
+CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
+CREATE INDEX IF NOT EXISTS idx_products_price ON products(price);
+CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders(user_id);
+CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
+CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at);
+
+-- Create function to update updated_at timestamp
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+-- Create triggers for updated_at (with IF NOT EXISTS equivalent)
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_user_profiles_updated_at') THEN
+    CREATE TRIGGER update_user_profiles_updated_at 
+        BEFORE UPDATE ON user_profiles 
+        FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_products_updated_at') THEN
+    CREATE TRIGGER update_products_updated_at 
+        BEFORE UPDATE ON products 
+        FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_orders_updated_at') THEN
+    CREATE TRIGGER update_orders_updated_at 
+        BEFORE UPDATE ON orders 
+        FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+END $$;
+
+-- Success message
+SELECT 'Database setup completed successfully!' as status;
