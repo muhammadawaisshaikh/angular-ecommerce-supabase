@@ -1,0 +1,60 @@
+<div class="container py-12">
+  <div class="max-w-2xl mx-auto text-center">
+    <!-- Success Icon -->
+    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-6">
+      <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+      </svg>
+    </div>
+
+    <!-- Success Message -->
+    <h1 class="text-3xl font-bold text-gray-900 mb-4">Order Placed Successfully!</h1>
+    <p class="text-lg text-gray-600 mb-6">
+      Thank you for your order. We've received your request and will process it shortly.
+    </p>
+
+    <!-- Order Details -->
+    <div *ngIf="orderId" class="bg-gray-50 rounded-lg p-6 mb-8">
+      <h2 class="text-lg font-semibold text-gray-900 mb-2">Order Details</h2>
+      <p class="text-gray-600">Order ID: <span class="font-mono font-medium">{{ orderId }}</span></p>
+      <p class="text-sm text-gray-500 mt-2">
+        You will receive an email confirmation with order details and tracking information.
+      </p>
+    </div>
+
+    <!-- Next Steps -->
+    <div class="bg-blue-50 rounded-lg p-6 mb-8">
+      <h3 class="text-lg font-semibold text-blue-900 mb-3">What's Next?</h3>
+      <ul class="text-left text-blue-800 space-y-2">
+        <li class="flex items-center">
+          <span class="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>
+          Order confirmation email sent
+        </li>
+        <li class="flex items-center">
+          <span class="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>
+          Order processing and preparation
+        </li>
+        <li class="flex items-center">
+          <span class="w-2 h-2 bg-blue-600 rounded-full mr-3"></span>
+          Shipping and delivery updates
+        </li>
+      </ul>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a routerLink="/products" class="btn btn-primary">
+        Continue Shopping
+      </a>
+      <a routerLink="/" class="btn btn-secondary">
+        Back to Home
+      </a>
+    </div>
+
+    <!-- Contact Information -->
+    <div class="mt-12 text-center">
+      <p class="text-gray-600 mb-2">Have questions about your order?</p>
+      <p class="text-indigo-600 font-medium">Contact us at support@estore.com</p>
+    </div>
+  </div>
+</div> 

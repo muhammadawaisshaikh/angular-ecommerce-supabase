@@ -1,0 +1,43 @@
+:host {
+  display: block;
+}
+
+.space-y-4 > * + * {
+  margin-top: 1rem;
+}
+
+.space-y-6 > * + * {
+  margin-top: 1.5rem;
+}
+
+.space-y-2 > * + * {
+  margin-top: 0.5rem;
+}
+
+.space-x-3 > * + * {
+  margin-left: 0.75rem;
+}
+
+.space-x-4 > * + * {
+  margin-left: 1rem;
+}
+
+.w-16 {
+  width: 4rem;
+}
+
+.h-16 {
+  height: 4rem;
+}
+
+.hover\:text-indigo-700:hover {
+  color: #4338ca;
+}
+
+.bg-red-50 {
+  background-color: #fef2f2;
+}
+
+.rounded {
+  border-radius: 0.25rem;
+} 

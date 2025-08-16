@@ -1,0 +1,74 @@
+<div class="container py-8">
+  <div *ngIf="isLoading" class="text-center py-12">
+    <div class="text-lg">Loading product...</div>
+  </div>
+
+  <div *ngIf="error" class="text-center py-12">
+    <div class="text-red-600 text-lg">{{ error }}</div>
+    <button (click)="goBackToProducts()" class="btn btn-primary mt-4">
+      Back to Products
+    </button>
+  </div>
+
+  <div *ngIf="product && !isLoading" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Product Image -->
+    <div class="space-y-4">
+      <img [src]="product.image_url" 
+           [alt]="product.name"
+           class="w-full h-96 object-cover rounded-lg">
+    </div>
+
+    <!-- Product Info -->
+    <div class="space-y-6">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ product.name }}</h1>
+        <p class="text-lg text-gray-600">{{ product.category }}</p>
+      </div>
+
+      <div class="text-3xl font-bold text-indigo-600">
+        ${{ product.price }}
+      </div>
+
+      <div class="text-gray-700">
+        <p>{{ product.description }}</p>
+      </div>
+
+      <div class="flex items-center space-x-4">
+        <span class="text-gray-600">Stock: {{ product.stock }}</span>
+        <span *ngIf="product.stock === 0" class="text-red-600 font-semibold">Out of Stock</span>
+      </div>
+
+      <!-- Quantity Selector -->
+      <div class="flex items-center space-x-4">
+        <label class="text-gray-700 font-medium">Quantity:</label>
+        <div class="flex items-center border border-gray-300 rounded-md">
+          <button (click)="updateQuantity(-1)" 
+                  [disabled]="quantity <= 1"
+                  class="px-3 py-2 text-gray-600 hover:text-gray-800 disabled:opacity-50">
+            -
+          </button>
+          <span class="px-4 py-2 border-x border-gray-300">{{ quantity }}</span>
+          <button (click)="updateQuantity(1)" 
+                  [disabled]="quantity >= product.stock"
+                  class="px-3 py-2 text-gray-600 hover:text-gray-800 disabled:opacity-50">
+            +
+          </button>
+        </div>
+      </div>
+
+      <!-- Add to Cart Button -->
+      <button (click)="addToCart()" 
+              [disabled]="product.stock === 0"
+              class="w-full btn btn-primary py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed">
+        {{ product.stock === 0 ? 'Out of Stock' : 'Add to Cart' }}
+      </button>
+
+      <!-- Back to Products -->
+      <div class="text-center">
+        <a routerLink="/products" class="text-indigo-600 hover:text-indigo-700">
+          ← Back to Products
+        </a>
+      </div>
+    </div>
+  </div>
+</div> 

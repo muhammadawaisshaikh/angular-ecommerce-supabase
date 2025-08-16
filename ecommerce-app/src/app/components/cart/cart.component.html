@@ -45,38 +45,40 @@
 
       <!-- Order Summary -->
       <div class="lg:col-span-5 mt-10 lg:mt-0">
-        <div class="bg-gray-50 rounded-lg p-6">
-          <h2 class="text-lg font-medium text-gray-900 mb-4">Order Summary</h2>
+        <div class="card p-6">
+          <h2 class="text-xl font-semibold text-gray-900 mb-4">Order Summary</h2>
           
-          <div class="space-y-4">
-            <div class="flex justify-between text-sm">
-              <span>Subtotal ({{ totalItems }} items)</span>
-              <span>${{ subtotal.toFixed(2) }}</span>
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Subtotal:</span>
+              <span class="text-gray-900">${{ subtotal.toFixed(2) }}</span>
             </div>
-            <div class="flex justify-between text-sm">
-              <span>Shipping</span>
-              <span>{{ shippingCost === 0 ? 'Free' : '$' + shippingCost.toFixed(2) }}</span>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Shipping:</span>
+              <span class="text-gray-900">{{ shippingCost === 0 ? 'Free' : '$' + shippingCost.toFixed(2) }}</span>
             </div>
-            <div class="border-t border-gray-200 pt-4">
-              <div class="flex justify-between text-base font-medium text-gray-900">
-                <span>Total</span>
-                <span>${{ total.toFixed(2) }}</span>
-              </div>
-              <p class="text-sm text-gray-500 mt-1">Including tax</p>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Tax (8.5%):</span>
+              <span class="text-gray-900">${{ (subtotal * 0.085).toFixed(2) }}</span>
+            </div>
+            <div class="flex justify-between text-lg font-semibold border-t pt-3">
+              <span>Total:</span>
+              <span class="text-indigo-600">${{ total.toFixed(2) }}</span>
             </div>
           </div>
 
-          <button (click)="proceedToCheckout()" 
-                  class="w-full bg-indigo-600 text-white py-3 px-4 rounded-md hover:bg-indigo-700 transition duration-300 mt-6">
+          <button routerLink="/checkout" 
+                  [disabled]="cartItems.length === 0"
+                  class="w-full btn btn-primary py-3 text-lg mt-6 disabled:opacity-50 disabled:cursor-not-allowed">
             Proceed to Checkout
           </button>
+        </div>
 
-          <div class="mt-4 text-center">
-            <a routerLink="/products" 
-               class="text-indigo-600 hover:text-indigo-500 text-sm">
-              Continue Shopping
-            </a>
-          </div>
+        <div class="mt-4 text-center">
+          <a routerLink="/products" 
+             class="text-indigo-600 hover:text-indigo-500 text-sm">
+            Continue Shopping
+          </a>
         </div>
       </div>
     </div>

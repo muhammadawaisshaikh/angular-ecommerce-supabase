@@ -18,20 +18,26 @@ export class CartService {
   }
 
   private loadCartFromStorage(): void {
-    const savedCart = localStorage.getItem('cart');
-    if (savedCart) {
-      try {
-        const cartData = JSON.parse(savedCart);
-        this.cartItems.next(cartData);
-      } catch (error) {
-        console.error('Error loading cart from storage:', error);
-        this.cartItems.next([]);
+    // Check if localStorage is available (not during SSR)
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const savedCart = localStorage.getItem('cart');
+      if (savedCart) {
+        try {
+          const cartData = JSON.parse(savedCart);
+          this.cartItems.next(cartData);
+        } catch (error) {
+          console.error('Error loading cart from storage:', error);
+          this.cartItems.next([]);
+        }
       }
     }
   }
 
   private saveCartToStorage(): void {
-    localStorage.setItem('cart', JSON.stringify(this.cartItems.value));
+    // Check if localStorage is available (not during SSR)
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.setItem('cart', JSON.stringify(this.cartItems.value));
+    }
   }
 
   getCartItems(): Observable<CartItem[]> {
@@ -81,7 +87,10 @@ export class CartService {
 
   clearCart(): void {
     this.cartItems.next([]);
-    localStorage.removeItem('cart');
+    // Check if localStorage is available (not during SSR)
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.removeItem('cart');
+    }
   }
 
   getCartTotal(): number {
