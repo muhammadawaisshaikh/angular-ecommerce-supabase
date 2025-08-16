@@ -17,7 +17,12 @@ export interface Product {
 
 export interface Order {
   id?: string;
-  user_id: string;
+  user_id?: string; // Optional for guest orders
+  customer_info?: {
+    fullName: string;
+    email: string;
+    phone: string;
+  };
   products: OrderProduct[];
   total_amount: number;
   status: 'pending' | 'shipped' | 'delivered';

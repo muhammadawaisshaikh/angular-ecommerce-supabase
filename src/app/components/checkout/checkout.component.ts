@@ -65,14 +65,14 @@ export class CheckoutComponent implements OnInit {
     this.error = '';
 
     try {
-      const currentUser = this.supabaseService.getCurrentUserValue();
-      if (!currentUser) {
-        this.router.navigate(['/login']);
-        return;
-      }
-
+      // Create order without user authentication
       const order = {
-        user_id: currentUser.id,
+        user_id: undefined, // Guest order - undefined instead of null
+        customer_info: {
+          fullName: this.checkoutForm.fullName,
+          email: this.checkoutForm.email,
+          phone: this.checkoutForm.phone
+        },
         products: this.cartItems.map(item => ({
           product_id: item.product.id!,
           quantity: item.quantity,
@@ -100,11 +100,13 @@ export class CheckoutComponent implements OnInit {
   }
 
   isFormValid(): boolean {
-    return this.checkoutForm.fullName.trim() !== '' &&
-           this.checkoutForm.email.trim() !== '' &&
-           this.checkoutForm.address.trim() !== '' &&
-           this.checkoutForm.city.trim() !== '' &&
-           this.checkoutForm.state.trim() !== '' &&
-           this.checkoutForm.zipCode.trim() !== '';
+    return !!(
+      this.checkoutForm.fullName &&
+      this.checkoutForm.email &&
+      this.checkoutForm.address &&
+      this.checkoutForm.city &&
+      this.checkoutForm.state &&
+      this.checkoutForm.zipCode
+    );
   }
 } 

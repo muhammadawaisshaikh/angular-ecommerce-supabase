@@ -21,24 +21,10 @@
                class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
               Products
             </a>
-            @if (currentUser) {
-              <a routerLink="/orders" 
-                 routerLinkActive="bg-indigo-100 text-indigo-700"
-                 class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
-                My Orders
-              </a>
-            }
-            @if (isAdmin) {
-              <a routerLink="/admin" 
-                 routerLinkActive="bg-indigo-100 text-indigo-700"
-                 class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50">
-                Admin
-              </a>
-            }
           </div>
         </div>
   
-        <!-- Right side - Cart and User -->
+        <!-- Right side - Cart only -->
         <div class="flex items-center space-x-6">
           <!-- Cart -->
           <a routerLink="/cart" class="relative p-2 text-gray-700 hover:text-indigo-600">
@@ -51,44 +37,6 @@
               </span>
             }
           </a>
-  
-          <!-- User Menu -->
-          @if (currentUser) {
-            <div class="relative ml-2">
-              <button (click)="toggleUserMenu()" 
-                      class="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                <span class="sr-only">Open user menu</span>
-                <div class="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center">
-                  <span class="text-white font-medium">{{ (currentUser.email || 'U').charAt(0).toUpperCase() }}</span>
-                </div>
-              </button>
-              
-              <!-- Dropdown Menu -->
-              @if (showUserMenu) {
-                <div class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
-                  <a routerLink="/profile" 
-                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                    Profile
-                  </a>
-                  <button (click)="signOut()" 
-                          class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                    Sign out
-                  </button>
-                </div>
-              }
-            </div>
-          } @else {
-            <div class="flex items-center space-x-3">
-              <a routerLink="/login" 
-                 class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">
-                Sign in
-              </a>
-              <a routerLink="/register" 
-                 class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium">
-                Sign up
-              </a>
-            </div>
-          }
         </div>
       </div>
     </nav>

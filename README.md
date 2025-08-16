@@ -1,14 +1,17 @@
 # Angular E-commerce App with Supabase
 
-A modern e-commerce application built with Angular 20 and Supabase, featuring a responsive design with Tailwind CSS.
+A modern e-commerce application built with Angular 20 and Supabase, featuring a responsive design with Tailwind CSS. This app focuses on product browsing, cart management, and guest checkout without requiring user authentication.
 
 ## 🚀 Features
 
 - **Modern Angular 20** with TypeScript
-- **Supabase Backend** for authentication, database, and storage
+- **Supabase Backend** for products, cart, and orders
 - **Responsive Design** with Tailwind CSS
 - **Client-Side Rendering** for optimal performance and simplicity
-- **E-commerce Functionality** including products, cart, and user management
+- **Guest Checkout** - No login required to place orders
+- **Shopping Cart** with persistent storage
+- **Product Catalog** with categories and search
+- **Order Management** for tracking purchases
 
 ## 📋 Prerequisites
 
@@ -87,15 +90,17 @@ export const environment = {
 
 The project includes SQL setup files for the database schema:
 
-- `database-setup.sql` - Complete database schema
+- `database-setup-guest-orders.sql` - **Recommended**: Database schema with guest order support
+- `database-setup.sql` - Original database schema (requires authentication)
 - `database-setup-safe.sql` - Safe version with proper constraints
 - `check-database.sql` - Verification queries
 
-To set up your database:
-
+**For Guest Orders (Recommended):**
 1. Go to **SQL Editor** in your Supabase dashboard
-2. Copy and paste the contents of `database-setup.sql` or `database-setup-safe.sql`
+2. Copy and paste the contents of `database-setup-guest-orders.sql`
 3. Run the SQL commands
+
+This will create tables that support both authenticated users and guest orders.
 
 ## 🚀 Running the Application
 
@@ -125,25 +130,25 @@ npm test
 ng test
 ```
 
-### End-to-End Testing
-
-```bash
-ng e2e
-```
-
 ## 📁 Project Structure
 
 ```
 angular-ecommerce-supabase/
 ├── src/
-│   ├── app/                 # Application components
-│   ├── environments/        # Environment configuration
-│   └── assets/             # Static assets
-├── public/                  # Public assets
-├── database-setup.sql      # Database schema
-├── angular.json            # Angular configuration
-├── tailwind.config.js      # Tailwind CSS configuration
-└── package.json            # Dependencies and scripts
+│   ├── app/
+│   │   ├── components/
+│   │   │   ├── home/           # Home page with featured products
+│   │   │   ├── products/       # Product listing and detail views
+│   │   │   ├── cart/           # Shopping cart management
+│   │   │   └── checkout/       # Checkout form and order processing
+│   │   ├── services/
+│   │   │   ├── supabase.service.ts    # Supabase API integration
+│   │   │   └── cart.service.ts        # Cart state management
+│   │   └── environments/       # Environment configuration
+│   ├── database-setup-guest-orders.sql # Database schema with guest orders
+│   ├── angular.json            # Angular configuration
+│   ├── tailwind.config.js      # Tailwind CSS configuration
+│   └── package.json            # Dependencies and scripts
 ```
 
 ## 🔐 Environment Variables
@@ -159,11 +164,17 @@ The application uses the following environment variables:
 
 The application includes a comprehensive e-commerce database schema with:
 
-- **Users** - User authentication and profiles
-- **Products** - Product catalog with categories
-- **Orders** - Order management and tracking
-- **Cart** - Shopping cart functionality
-- **Categories** - Product categorization
+- **Products** - Product catalog with categories, prices, and stock
+- **Orders** - Order management supporting both authenticated and guest users
+- **Cart** - Shopping cart functionality with local storage persistence
+
+### Guest Order Support
+
+The updated schema supports guest orders by:
+- Making `user_id` optional in the orders table
+- Adding `customer_info` JSONB field for guest contact details
+- Allowing anyone to insert orders (no authentication required)
+- Maintaining security through Row Level Security policies
 
 ## 🚀 Deployment
 

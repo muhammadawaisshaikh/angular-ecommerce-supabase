@@ -39,7 +39,7 @@ supabase: {
 
 ### 5. Setup Database
 - Go to **SQL Editor** in Supabase
-- Copy content from `database-setup.sql`
+- Copy content from `database-setup-guest-orders.sql` (recommended)
 - Run the SQL commands
 
 ### 6. Start Development
