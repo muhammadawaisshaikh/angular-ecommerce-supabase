@@ -18,10 +18,9 @@
       </div>
       <div class="flex gap-2">
         <div class="relative">
-          <i class="fas fa-filter absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
           <select [value]="selectedCategory()" 
                   (change)="updateSelectedCategory($any($event.target).value)"
-                  class="pl-10 pr-8 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                  class="pl-2 pr-8 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
             <option value="">All Categories</option>
             @for (category of categories(); track category) {
               <option [value]="category">{{ category }}</option>
@@ -29,10 +28,9 @@
           </select>
         </div>
         <div class="relative">
-          <i class="fas fa-sort absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
           <select [value]="sortBy()" 
                   (change)="updateSortBy($any($event.target).value)"
-                  class="pl-10 pr-8 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                  class="pl-2 pr-8 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
             <option value="name">Sort by Name</option>
             <option value="price-low">Price: Low to High</option>
             <option value="price-high">Price: High to Low</option>
@@ -43,11 +41,10 @@
                 [disabled]="isLoading()"
                 class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 flex items-center">
           @if (isLoading()) {
-            <i class="fas fa-spinner fa-spin mr-2"></i>
+            <i class="fas fa-spinner fa-spin"></i>
           } @else {
-            <i class="fas fa-redo mr-2"></i>
+            <i class="fas fa-redo"></i>
           }
-          {{ isLoading() ? 'Loading...' : 'Refresh' }}
         </button>
       </div>
     </div>
