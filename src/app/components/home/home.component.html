@@ -1,17 +1,17 @@
-<!-- Hero Carousel Section -->
+<!-- Hero Carousel Section - Fast Auto-play (1 second intervals) -->
 <app-hero-carousel 
   [showNavigationButtons]="false"
   [showContentOverlay]="false"
   [showDots]="true"
-  [showAutoPlayIndicator]="true"
-  [autoPlayInterval]="4000"
-  [carouselHeight]="'h-96 md:h-[500px] lg:h-[600px]'"
-  [transitionDuration]="800"
+  [showAutoPlayIndicator]="false"
+  [autoPlayInterval]="1000"
+  [carouselHeight]="'h-[250px] sm:h-96 md:h-[500px] lg:h-[600px]'"
+  [transitionDuration]="300"
   [enableHoverPause]="true">
 </app-hero-carousel>
 
 <!-- Featured Products Section -->
-<section class="py-16 bg-gray-50">
+<section class="py-10 bg-gray-50">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center mb-12">
       <h2 class="text-3xl font-bold text-gray-900 mb-4">Featured Products</h2>

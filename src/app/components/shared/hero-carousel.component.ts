@@ -23,8 +23,8 @@ export interface CarouselSlide {
  * <app-hero-carousel 
  *   [showNavigationButtons]="false"
  *   [showContentOverlay]="true"
- *   [autoPlayInterval]="3000"
- *   [carouselHeight]="'h-64'">
+ *   [autoPlayInterval]="1000"
+ *   [carouselHeight]="'h-[300px] sm:h-64'">
  * </app-hero-carousel>
  * ```
  */
@@ -32,8 +32,7 @@ export interface CarouselSlide {
   selector: 'app-hero-carousel',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  templateUrl: './hero-carousel.component.html',
-  styleUrls: ['./hero-carousel.component.scss']
+  templateUrl: './hero-carousel.component.html'
 })
 export class HeroCarouselComponent implements OnInit, OnDestroy {
   /**
@@ -62,21 +61,21 @@ export class HeroCarouselComponent implements OnInit, OnDestroy {
   
   /**
    * Auto-play interval in milliseconds
-   * @default 5000
+   * @default 1000
    */
-  autoPlayInterval = input<number>(5000);
+  autoPlayInterval = input<number>(1000);
   
   /**
-   * CSS classes for carousel height (e.g., 'h-64', 'h-96 md:h-[500px]')
-   * @default 'h-96 md:h-[500px] lg:h-[600px]'
+   * CSS classes for carousel height (e.g., 'h-64', 'h-[300px] sm:h-96 md:h-[500px]')
+   * @default 'h-[300px] sm:h-96 md:h-[500px] lg:h-[600px]'
    */
-  carouselHeight = input<string>('h-96 md:h-[500px] lg:h-[600px]');
+  carouselHeight = input<string>('h-[300px] sm:h-96 md:h-[500px] lg:h-[600px]');
   
   /**
    * Slide transition duration in milliseconds
-   * @default 700
+   * @default 300
    */
-  transitionDuration = input<number>(700);
+  transitionDuration = input<number>(300);
   
   /**
    * Enables/disables auto-play pause on hover
@@ -131,7 +130,10 @@ export class HeroCarouselComponent implements OnInit, OnDestroy {
   constructor() {
     // Effect to automatically update totalSlides when slides change
     effect(() => {
-      this.totalSlides = this.slides().length;
+      const newTotalSlides = this.slides().length;
+      
+      this.totalSlides = newTotalSlides;
+      
       // Reset current slide if it's out of bounds
       if (this.currentSlide >= this.totalSlides) {
         this.currentSlide = 0;
@@ -149,21 +151,29 @@ export class HeroCarouselComponent implements OnInit, OnDestroy {
 
   // Carousel methods
   nextSlide(): void {
-    this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+    if (this.totalSlides > 0) {
+      this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+    }
   }
 
   previousSlide(): void {
-    this.currentSlide = this.currentSlide === 0 ? this.totalSlides - 1 : this.currentSlide - 1;
+    if (this.totalSlides > 0) {
+      this.currentSlide = this.currentSlide === 0 ? this.totalSlides - 1 : this.currentSlide - 1;
+    }
   }
 
   goToSlide(slideIndex: number): void {
-    this.currentSlide = slideIndex;
+    if (slideIndex >= 0 && slideIndex < this.totalSlides) {
+      this.currentSlide = slideIndex;
+    }
   }
 
   startAutoPlay(): void {
+    const interval = this.autoPlayInterval();
+    
     this.autoPlayTimer = setInterval(() => {
       this.nextSlide();
-    }, this.autoPlayInterval()); // Call the signal function to get the value
+    }, interval); // Call the signal function to get the value
   }
 
   stopAutoPlay(): void {
@@ -187,12 +197,15 @@ export class HeroCarouselComponent implements OnInit, OnDestroy {
   }
 
   // Get current slide
-  getCurrentSlide(): CarouselSlide {
-    return this.slides()[this.currentSlide];
+  getCurrentSlide(): CarouselSlide | null {
+    if (this.totalSlides > 0 && this.currentSlide >= 0 && this.currentSlide < this.totalSlides) {
+      return this.slides()[this.currentSlide];
+    }
+    return null;
   }
 
   // Check if slide is active
   isSlideActive(slideIndex: number): boolean {
-    return this.currentSlide === slideIndex;
+    return this.totalSlides > 0 && this.currentSlide >= 0 && this.currentSlide < this.totalSlides && this.currentSlide === slideIndex;
   }
 } 
